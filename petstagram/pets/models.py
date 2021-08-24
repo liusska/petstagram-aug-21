@@ -1,11 +1,6 @@
 from django.db import models
 
 
-# def is_positive(value):
-#     if value <= 0:
-#         raise ValidationError
-
-
 class Pet(models.Model):
     TYPE_CHOICE_DOG = 'dog'
     TYPE_CHOICE_CAT = 'cat'
@@ -24,11 +19,7 @@ class Pet(models.Model):
     name = models.CharField(
         max_length=6,
     )
-    age = models.PositiveIntegerField(
-        # validators=[
-        #     # is_positive,
-        # ]
-    )
+    age = models.PositiveIntegerField()
     description = models.TextField()
     image_url = models.URLField()
 
