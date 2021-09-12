@@ -38,18 +38,13 @@ class Pet(models.Model):
         on_delete=models.CASCADE,
     )
 
-    # def save(self, force_insert=False, force_update=False, using=None,
-    #          update_fields=None):
-    #     db_pet = Pet.objects.get(pk=self.instance.id)
-    #     if commit:
-    #         image_path = join(settings.MEDIA_ROOT, str(db_pet.image))
-    #         os.remove(image_path)
-    #     return super().save(force_insert=force_insert, force_update=force_update,
-    #                         using=using, update_fields=update_fields)
-
     def __str__(self):
         return f'{self.type} {self.name}'
 
 
 class Like(models.Model):
     pet = models.ForeignKey(Pet, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        UserModel,
+        on_delete=models.CASCADE,
+    )

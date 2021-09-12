@@ -44,23 +44,19 @@ def comment_pet(request, pk):
 
     return redirect('pet details', pet.id)
 
-# variant 2
-#
-# def comment_pet(request, pk):
-#     form = CommentForm(request.POST)
-#     if form.is_valid():
-#         comment.save()
-#
-#     return redirect('pet details', pk)
-
 
 def pet_like(request, pk):
     pet = Pet.objects.get(pk=pk)
-    like = Like(
-        pet=pet
-    )
-    like.save()
-    return pet_details(request, pk)
+    liked_obj_by_user = pet.like_set.filter(user_id=request.user.id).first()
+    if liked_obj_by_user:
+        liked_obj_by_user.delete()
+    else:
+        like = Like(
+            pet=pet,
+            user=request.user,
+        )
+        like.save()
+    return redirect('pet details', pet.id)
 
 
 @login_required
