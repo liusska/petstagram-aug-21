@@ -3,6 +3,7 @@ from petstagram.pets.models import Pet, Like
 from petstagram.pets.forms import PetForm, EditPetForm
 from petstagram.common.forms import CommentForm
 from petstagram.common.models import Comment
+from django.contrib.auth.decorators import login_required
 
 
 def pet_list(request):
@@ -15,15 +16,18 @@ def pet_list(request):
 def pet_details(request, pk):
     pet = Pet.objects.get(pk=pk)
     pet.likes_count = pet.like_set.count()
+
+    is_owner = pet.user == request.user
+
     context = {
         'pet': pet,
         'comment_form': CommentForm(
-            # variant 2
-            # initial={
-            #     'pet_pk': pk,
-            # }
+            initial={
+                'pet_pk': pk,
+            }
         ),
         'comments': pet.comment_set.all(),
+        'is_owner': is_owner,
     }
     return render(request, 'pets/pet_detail.html', context)
 
@@ -59,11 +63,14 @@ def pet_like(request, pk):
     return pet_details(request, pk)
 
 
+@login_required
 def create_pet(request):
     if request.method == "POST":
         form = PetForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            pet = form.save(commit=False)
+            pet.user = request.user
+            pet.save()
             return redirect('pet list')
     else:
         form = PetForm()

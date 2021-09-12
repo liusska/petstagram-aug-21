@@ -3,6 +3,9 @@ from django.db import models
 import os
 from os.path import join
 from django.conf import settings
+from django.contrib.auth import get_user_model
+
+UserModel = get_user_model()
 
 
 class Pet(models.Model):
@@ -28,6 +31,11 @@ class Pet(models.Model):
     # image_url = models.URLField()
     image = models.ImageField(
         upload_to='pets'
+    )
+
+    user = models.ForeignKey(
+        UserModel,
+        on_delete=models.CASCADE,
     )
 
     # def save(self, force_insert=False, force_update=False, using=None,

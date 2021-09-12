@@ -12,6 +12,7 @@
                     <h5><u>Type:</u> {{ pet.type }}</h5>
                     <h5><u>Name:</u> {{ pet.name }}</h5>
                     <h5><u>Age:</u> {{ pet.age }}</h5>
+                    <h5><u>Owner:</u> {{ pet.user.email }}</h5>
                 </div>
                 <p class="mt-2">Description: {{ pet.description }}</p>
                 <p>
@@ -35,6 +36,7 @@
                     <h3>There are no comments for this pet. </h3>
                 </div>
             {% endif %}
+        {% if not is_owner %}
             <div class="box">
                 <form method="post" action="{% url 'comment pet' pet.id %}">
                     {% csrf_token %}
@@ -43,6 +45,7 @@
                 </form>
             </div>
         </div>
+    {% endif %}
 
     </div>
 
