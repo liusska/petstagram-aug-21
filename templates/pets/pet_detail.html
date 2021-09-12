@@ -15,12 +15,16 @@
                     <h5><u>Owner:</u> {{ pet.user.email }}</h5>
                 </div>
                 <p class="mt-2">Description: {{ pet.description }}</p>
-                <p>
-                    <a href="{% url 'edit pet' pet.id %}" class="btn btn-success">Edit</a>
-                    <a href="{% url 'delete pet' pet.id %}" class="btn btn-danger">Delete</a>
-                </p>
-                <a href="{% url 'pet like' pet.id %} "><i class="fa fa-heart-o" aria-hidden="true"></i></a>
-                <p class="mt-2">Likes: {{ pet.likes_count }}</p>
+                {% if is_owner %}
+                    <div>
+                        <a href="{% url 'edit pet' pet.id %}" class="btn btn-success">Edit</a>
+                        <a href="{% url 'delete pet' pet.id %}" class="btn btn-danger">Delete</a>
+                    </div>
+
+                {% else %}
+                    <a href="{% url 'pet like' pet.id %} "><i class="fa fa-heart-o" aria-hidden="true"></i></a>
+                    <p class="mt-2">Likes: {{ pet.likes_count }}</p>
+                {% endif %}
             </div>
         </div>
         <div class="d-block" style="background-color: #f1e3e3; padding:2%">
@@ -36,16 +40,16 @@
                     <h3>There are no comments for this pet. </h3>
                 </div>
             {% endif %}
-        {% if not is_owner %}
-            <div class="box">
-                <form method="post" action="{% url 'comment pet' pet.id %}">
-                    {% csrf_token %}
-                    {{ comment_form }}
-                    <button class="btn btn-primary mt-2" type="submit">Add comment</button>
-                </form>
-            </div>
-        </div>
-    {% endif %}
+            {% if not is_owner %}
+                <div class="box">
+                    <form method="post" action="{% url 'comment pet' pet.id %}">
+                        {% csrf_token %}
+                        {{ comment_form }}
+                        <button class="btn btn-primary mt-2" type="submit">Add comment</button>
+                    </form>
+                </div>
+                </div>
+            {% endif %}
 
     </div>
 

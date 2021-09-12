@@ -1,6 +1,11 @@
 from django import forms
 from django.contrib.auth import authenticate
 from django.core.exceptions import ValidationError
+from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import UserCreationForm
+
+
+UserModel = get_user_model()
 
 
 class LoginForm(forms.Form):
@@ -21,3 +26,9 @@ class LoginForm(forms.Form):
 
     def save(self):
         return self.user
+
+
+class RegisterForm(UserCreationForm):
+    class Meta:
+        model = UserModel
+        fields = ("email",)
