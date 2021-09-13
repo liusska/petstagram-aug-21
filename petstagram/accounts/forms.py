@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate
 from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
+from petstagram.accounts.models import Profile
 
 
 UserModel = get_user_model()
@@ -32,3 +33,9 @@ class RegisterForm(UserCreationForm):
     class Meta:
         model = UserModel
         fields = ("email",)
+
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ('profile_image', )

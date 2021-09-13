@@ -22,7 +22,13 @@
                     </div>
 
                 {% else %}
-                    <a href="{% url 'pet like' pet.id %} "><i class="fa fa-heart-o" aria-hidden="true"></i></a>
+                    <a href="{% url 'pet like' pet.id %} ">
+                    {% if is_liked %}
+                        <i class="fa fa-heart" aria-hidden="true"></i>
+                        {% else %}
+                        <i class="fa fa-heart-o" aria-hidden="true"></i>
+                        {% endif %}
+                    </a>
                     <p class="mt-2">Likes: {{ pet.likes_count }}</p>
                 {% endif %}
             </div>
@@ -31,7 +37,7 @@
             {% if comments %}
                 {% for comment in comments %}
                     <div class="box">
-                        <h5><em>{{ comment.text }}</em></h5>
+                        <h5><u>{{ comment.user }}: </u><em>{{ comment.text }}</em></h5>
                         <hr>
                     </div>
                 {% endfor %}
