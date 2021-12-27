@@ -1,26 +1,25 @@
-{% extends 'base_layout.html' %}
+{% extends 'base/base.html' %}
 
 {% block content %}
+
 <div class="container">
-    {% if pets %}
     <h1 class='text-center'>All pet photos</h1>
     <div class="row">
-        {% for pet in pets %}
-            <div class="col-lg-4">
-                <div class="card" style="width: 18rem;">
-                    <img src="{{ pet.image.url }}" class="card-img-top" alt="{{ pet.description }}">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ pet.type }} {{ pet.name }}, Age: {{ pet.age }}</h5>
-                        <p class="card-text">{{ pet.description }}</p>
-                        <a href="{% url 'pet details' pet.pk %}" class="btn btn-primary">See details</a>
+        {% if pets %}
+            {% for pet in pets %}
+                <div class="col-lg-4">
+                    <div class="card" style="width: 18rem;">
+                        <img src="{{ pet.image_url }}" class="card-img-top" alt="{{ pet.description }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ pet.type }} {{ pet.name }}, Age: {{ pet.age }}</h5>
+                            <p class="card-text">{{ pet.description }}</p>
+                            <a href="{% url 'details pets' pet.id %}" class="btn btn-primary">See details</a>
+                        </div>
                     </div>
                 </div>
-            </div>
-        {% endfor %}
-    </div>
-    {% else %}
-        <h1 class='text-center'>No Pets Photos</h1>
-    {% endif %}
-</div>
+            {% endfor %}
+        {% endif %}
 
+    </div>
+</div>
 {% endblock %}
