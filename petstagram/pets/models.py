@@ -31,12 +31,11 @@ class Pet(models.Model):
         upload_to='pets',
     )
 
-    def save(self, force_insert=False, force_update=False, using=None,
-             update_fields=None):
-        db_pet = Pet.objects.get(pk=self.id)
-        image_path = os.path.join(settings.MEDIA_ROOT, str(db_pet.image))
-        os.remove(image_path)
-        return super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
+    # def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+    #     db_pet = Pet.objects.get(pk=self.id)
+    #     image_path = join(settings.MEDIA_ROOT, str(db_pet.image))
+    #     os.remove(image_path)
+    #     return super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
 
 
 class Like(models.Model):
