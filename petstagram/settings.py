@@ -29,6 +29,7 @@ INSTALLED_APPS = [
 
     'petstagram.common',
     'petstagram.pets',
+    'petstagram.accounts',
 ]
 
 MIDDLEWARE = [
@@ -121,3 +122,4 @@ STATICFILES_DIRS = (
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media_files'
 
+AUTH_USER_MODEL = 'accounts.PetstagramUser'
