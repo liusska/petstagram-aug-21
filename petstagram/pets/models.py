@@ -2,6 +2,9 @@ import os
 from django.conf import settings
 from django.db import models
 from django.core.validators import ValidationError
+from django.contrib.auth import get_user_model
+
+UserModel = get_user_model()
 
 
 class Pet(models.Model):
@@ -30,6 +33,12 @@ class Pet(models.Model):
     image = models.ImageField(
         upload_to='pets',
     )
+
+    user = models.ForeignKey(
+        UserModel,
+        on_delete=models.CASCADE,
+    )
+
 
     # def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
     #     db_pet = Pet.objects.get(pk=self.id)

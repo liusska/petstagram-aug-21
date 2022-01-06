@@ -8,6 +8,7 @@ from petstagram.core.forms import BootstrapFormMixin
 class PetForm(BootstrapFormMixin, forms.ModelForm):
     class Meta:
         model = Pet
+        exclude = ('user', )
         fields = '__all__'
 
 
