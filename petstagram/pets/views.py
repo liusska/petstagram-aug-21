@@ -3,6 +3,7 @@ from petstagram.pets.models import Pet, Like
 from petstagram.pets.forms import PetForm, EditPetForm
 from petstagram.common.forms import CommentForm
 from petstagram.common.models import Comment
+from django.contrib.auth.decorators import login_required
 
 
 def list_pets(request):
@@ -49,6 +50,7 @@ def like_pet(request, pk):
     return redirect('details pets', pet_to_like.id)
 
 
+@login_required
 def create_pet(request):
     if request.method == 'POST':
         form = PetForm(request.POST, request.FILES)

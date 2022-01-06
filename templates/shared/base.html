@@ -19,9 +19,19 @@
         <ul class="navbar-nav">
             <li><a class="nav-link" href="/">Home</a></li>
             <li class="nav-item"><a class="nav-link" href="{% url 'list pets' %}">All Pets Photos</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'create pet' %}">Add Pets Photos</a></li>
-            <li class="nav-item"><a class="nav-link" href="#">Login</a></li>
-            <li class="nav-item"><a class="nav-link" href="#">Sign Up</a></li>
+            {% if request.user.is_authenticated %}
+                <li class="nav-item"><a class="nav-link" href="{% url 'create pet' %}">Add Pets Photos</a></li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="url to profile">{{ request.user }}</a>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
+
+            {% else %}
+
+            <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Register</a></li>
+            {% endif %}
         </ul>
     </div>
 </nav>
