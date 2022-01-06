@@ -26,4 +26,4 @@ class PetstagramUserAdmin(UserAdmin):
         }),
     )
 
-    readonly_fields = ('date_joined', 'email')
+    readonly_fields = ('date_joined', )

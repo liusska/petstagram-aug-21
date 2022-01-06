@@ -18,10 +18,15 @@ def list_pets(request):
 def pet_details(request, pk):
     pet = Pet.objects.get(pk=pk)
     pet.likes_count = pet.like_set.count()
+
+    # can_edit = pet.user == request.user
+    # can_delete = pet.user == request.user
+    is_owner = pet.user == request.user
     context = {
         'pet': pet,
         'comment_form': CommentForm(),
         'comments': pet.comment_set.all(),
+        'is_owner': is_owner,
     }
 
     return render(request, 'pets/pet_detail.html', context)
