@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, get_user_model
+from petstagram.accounts.models import Profile
+
 
 UserModel = get_user_model()
 
@@ -30,3 +32,9 @@ class RegisterForm(UserCreationForm):
     class Meta:
         model = UserModel
         fields = ('email', )
+
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ('profile_image', )

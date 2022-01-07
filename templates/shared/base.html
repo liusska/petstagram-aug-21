@@ -23,7 +23,7 @@
                 <li class="nav-item"><a class="nav-link" href="{% url 'create pet' %}">Add Pets Photos</a></li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="url to profile">{{ request.user }}</a>
+                    <a class="nav-link" href="{% url 'profile details' %}">{{ request.user }}</a>
                 </li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
 

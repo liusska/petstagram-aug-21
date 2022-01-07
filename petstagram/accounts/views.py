@@ -1,6 +1,9 @@
 from django.contrib.auth import logout, login
 from django.shortcuts import render, redirect
-from .forms import LoginForm, RegisterForm
+from .forms import LoginForm, RegisterForm, ProfileForm
+from django.contrib.auth.decorators import login_required
+from petstagram.pets.models import Pet
+from petstagram.accounts.models import Profile
 
 
 def login_user(request):
@@ -40,3 +43,29 @@ def register_user(request):
 def logout_user(request):
     logout(request)
     return redirect('index')
+
+
+@login_required
+def profile_details(request):
+    profile = Profile.objects.get(pk=request.user.id)
+    if request.method == 'POST':
+        form = ProfileForm(
+            request.POST,
+            request.FILES,
+            instance=profile,
+        )
+        if form.is_valid():
+            form.save()
+            return redirect('profile details')
+    else:
+        form = ProfileForm(instance=profile)
+
+    user_pets = Pet.objects.filter(user_id=request.user.id)
+
+    context = {
+        'form': form,
+        'pets': user_pets,
+        'profile': profile,
+    }
+
+    return render(request, 'accounts/user_profile.html', context)
