@@ -26,7 +26,11 @@ def pet_details(request, pk):
 
     context = {
         'pet': pet,
-        'comment_form': CommentForm(),
+        'comment_form': CommentForm(
+            initial={
+                'pet_pk': pk,
+            }
+        ),
         'comments': pet.comment_set.all(),
         'is_owner': is_owner,
         'is_liked': is_liked_by_user,
@@ -35,17 +39,16 @@ def pet_details(request, pk):
     return render(request, 'pets/pet_detail.html', context)
 
 
+@login_required
 def comment_pet(request, pk):
-    pet = Pet.objects.get(pk=pk)
     form = CommentForm(request.POST)
+
     if form.is_valid():
-        comment = Comment(
-            text=form.cleaned_data['text'],
-            pet=pet,
-        )
+        comment = form.save(commit=False)
+        comment.user = request.user
         comment.save()
 
-    return redirect('details pets', pet.id)
+    return redirect('details pets', pk)
 
 
 def like_pet(request, pk):
