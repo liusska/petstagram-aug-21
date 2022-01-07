@@ -22,11 +22,14 @@ def pet_details(request, pk):
     # can_edit = pet.user == request.user
     # can_delete = pet.user == request.user
     is_owner = pet.user == request.user
+    is_liked_by_user = pet.like_set.filter(user_id=request.user.id).exists()
+
     context = {
         'pet': pet,
         'comment_form': CommentForm(),
         'comments': pet.comment_set.all(),
         'is_owner': is_owner,
+        'is_liked': is_liked_by_user,
     }
 
     return render(request, 'pets/pet_detail.html', context)
@@ -46,13 +49,17 @@ def comment_pet(request, pk):
 
 
 def like_pet(request, pk):
-    pet_to_like = Pet.objects.get(pk=pk)
-    like = Like(
-        pet=pet_to_like,
-    )
-
-    like.save()
-    return redirect('details pets', pet_to_like.id)
+    pet = Pet.objects.get(pk=pk)
+    like_object_by_user = pet.like_set.filter(user_id=request.user.id).first()
+    if like_object_by_user:
+        like_object_by_user.delete()
+    else:
+        like = Like(
+            pet=pet,
+            user=request.user,
+        )
+        like.save()
+    return redirect('details pets', pet.id)
 
 
 @login_required
