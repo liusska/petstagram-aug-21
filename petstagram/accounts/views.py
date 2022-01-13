@@ -1,12 +1,40 @@
 from django.contrib.auth import logout, login
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from django.views.generic import CreateView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import CreateView, FormView
 from django.urls import reverse_lazy
 
 from .forms import LoginForm, RegisterForm, ProfileForm
 from petstagram.pets.models import Pet
 from petstagram.accounts.models import Profile
+
+
+class ProfileDetailsView(LoginRequiredMixin, FormView):
+    template_name = 'accounts/user_profile.html'
+    form_class = ProfileForm
+    success_url = reverse_lazy('profile details')
+    object = None
+
+    def get(self, request, *args, **kwargs):
+        self.object = Profile.objects.get(pk=self.request.user.id)
+        return super().get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        self.object = Profile.objects.get(pk=self.request.user.id)
+        return super().post(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        self.object.profile_image = form.cleaned_data['profile_image']
+        self.object.save()
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context['pets'] = Pet.objects.filter(user_id=self.request.user.id)
+        context['profile'] = self.object
+        return context
 
 
 class RegisterView(CreateView):
@@ -19,6 +47,16 @@ class RegisterView(CreateView):
         login(self.request, self.object)
         return result
 
+
+# class LoginView(CreateView):
+#     form_class = LoginForm
+#     template_name = 'accounts/login.html'
+#     success_url = reverse_lazy('index')
+#
+#     def form_valid(self, form):
+#         result = super().form_valid(form)
+#         login(self.request, self.object)
+#         return result
 
 
 def login_user(request):
@@ -60,27 +98,27 @@ def logout_user(request):
     return redirect('index')
 
 
-@login_required
-def profile_details(request):
-    profile = Profile.objects.get(pk=request.user.id)
-    if request.method == 'POST':
-        form = ProfileForm(
-            request.POST,
-            request.FILES,
-            instance=profile,
-        )
-        if form.is_valid():
-            form.save()
-            return redirect('profile details')
-    else:
-        form = ProfileForm(instance=profile)
-
-    user_pets = Pet.objects.filter(user_id=request.user.id)
-
-    context = {
-        'form': form,
-        'pets': user_pets,
-        'profile': profile,
-    }
-
-    return render(request, 'accounts/user_profile.html', context)
+# @login_required
+# def profile_details(request):
+#     profile = Profile.objects.get(pk=request.user.id)
+#     if request.method == 'POST':
+#         form = ProfileForm(
+#             request.POST,
+#             request.FILES,
+#             instance=profile,
+#         )
+#         if form.is_valid():
+#             form.save()
+#             return redirect('profile details')
+#     else:
+#         form = ProfileForm(instance=profile)
+#
+#     user_pets = Pet.objects.filter(user_id=request.user.id)
+#
+#     context = {
+#         'form': form,
+#         'pets': user_pets,
+#         'profile': profile,
+#     }
+#
+#     return render(request, 'accounts/user_profile.html', context)
