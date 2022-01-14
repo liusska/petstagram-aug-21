@@ -1,7 +1,7 @@
 from django.urls import reverse_lazy
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from django.views.generic import DetailView, FormView, View, ListView, CreateView, UpdateView
+from django.views.generic import DetailView, FormView, View, DeleteView, ListView, CreateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from petstagram.pets.models import Pet, Like
@@ -96,38 +96,15 @@ def like_pet(request, pk):
     return redirect('details pets', pet.id)
 
 
-def edit_pet(request, pk):
-    pet = Pet.objects.get(pk=pk)
-    if request.method == 'POST':
-        form = EditPetForm(request.POST, request.FILES, instance=pet)
-        if form.is_valid():
-            form.save()
-            return redirect('list pets')
-    else:
-        form = EditPetForm(instance=pet)
-
-    context = {
-        'form': form,
-        'pet': pet,
-    }
-
-    return render(request, 'pets/pet_edit.html', context)
-
-
-class EditPetView(UpdateView):
+class EditPetView(LoginRequiredMixin, UpdateView):
     model = Pet
     template_name = 'pets/pet_edit.html'
     form_class = EditPetForm
     success_url = reverse_lazy('list pets')
 
 
-def delete_pet(request, pk):
-    pet = Pet.objects.get(pk=pk)
-    if request.method == 'POST':
-        pet.delete()
-        return redirect('list pets')
-    else:
-        context = {
-            'pet': pet
-        }
-        return render(request, 'pets/pet_delete.html', context)
+class DeletePetView(LoginRequiredMixin, DeleteView):
+    model = Pet
+    template_name = 'pets/pet_delete.html'
+    success_url = reverse_lazy('list pets')
+
