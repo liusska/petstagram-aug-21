@@ -1,5 +1,7 @@
-from django.contrib.auth import logout, login
+from django.contrib.auth import logout, login, authenticate
+from django.contrib.auth.views import LoginView
 from django.shortcuts import render, redirect
+from django.core.exceptions import ValidationError
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import CreateView, FormView
@@ -48,15 +50,10 @@ class RegisterView(CreateView):
         return result
 
 
-# class LoginView(CreateView):
-#     form_class = LoginForm
-#     template_name = 'accounts/login.html'
-#     success_url = reverse_lazy('index')
-#
-#     def form_valid(self, form):
-#         result = super().form_valid(form)
-#         login(self.request, self.object)
-#         return result
+class LoginUserView(LoginView):
+    authentication_form = LoginForm
+    template_name = 'accounts/login.html'
+    success_url = reverse_lazy('index')
 
 
 def login_user(request):

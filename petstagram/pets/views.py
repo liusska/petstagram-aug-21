@@ -9,6 +9,13 @@ from petstagram.pets.forms import PetForm, EditPetForm
 from petstagram.common.forms import CommentForm
 from petstagram.common.models import Comment
 from petstagram.core.forms import BootstrapFormMixin
+from petstagram.core.views import PostOnlyView
+
+
+class ListPetsView(ListView):
+    model = Pet
+    template_name = 'pets/pet_list.html'
+    context_object_name = 'pets'
 
 
 class PetDetailsView(DetailView):
@@ -37,16 +44,8 @@ class PetDetailsView(DetailView):
         return context
 
 
-class CommentPetView(LoginRequiredMixin, View):
+class CommentPetView(LoginRequiredMixin, PostOnlyView):
     form_class = CommentForm
-    success_url = ''
-
-    def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST)
-        if form.is_valid():
-            return self.form_valid(form)
-        else:
-            return self.form_invalid(form)
 
     def form_valid(self, form):
         pet = Pet.objects.get(pk=self.kwargs['pk'])
@@ -63,10 +62,18 @@ class CommentPetView(LoginRequiredMixin, View):
         pass
 
 
-class ListPetsView(ListView):
-    model = Pet
-    template_name = 'pets/pet_list.html'
-    context_object_name = 'pets'
+def like_pet(request, pk):
+    pet = Pet.objects.get(pk=pk)
+    like_object_by_user = pet.like_set.filter(user_id=request.user.id).first()
+    if like_object_by_user:
+        like_object_by_user.delete()
+    else:
+        like = Like(
+            pet=pet,
+            user=request.user,
+        )
+        like.save()
+    return redirect('details pets', pet.id)
 
 
 class CreatePet(LoginRequiredMixin, CreateView):
@@ -80,20 +87,6 @@ class CreatePet(LoginRequiredMixin, CreateView):
         pet.user = self.request.user
         pet.save()
         return super().form_valid(form)
-
-
-def like_pet(request, pk):
-    pet = Pet.objects.get(pk=pk)
-    like_object_by_user = pet.like_set.filter(user_id=request.user.id).first()
-    if like_object_by_user:
-        like_object_by_user.delete()
-    else:
-        like = Like(
-            pet=pet,
-            user=request.user,
-        )
-        like.save()
-    return redirect('details pets', pet.id)
 
 
 class EditPetView(LoginRequiredMixin, UpdateView):
