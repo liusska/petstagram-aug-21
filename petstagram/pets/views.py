@@ -1,12 +1,14 @@
+from django.urls import reverse_lazy
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from django.views.generic import DetailView, FormView, View
+from django.views.generic import DetailView, FormView, View, ListView, CreateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from petstagram.pets.models import Pet, Like
 from petstagram.pets.forms import PetForm, EditPetForm
 from petstagram.common.forms import CommentForm
 from petstagram.common.models import Comment
+from petstagram.core.forms import BootstrapFormMixin
 
 
 class PetDetailsView(DetailView):
@@ -61,13 +63,23 @@ class CommentPetView(LoginRequiredMixin, View):
         pass
 
 
-def list_pets(request):
-    all_pets = Pet.objects.all()
-    context = {
-        'pets': all_pets,
-    }
+class ListPetsView(ListView):
+    model = Pet
+    template_name = 'pets/pet_list.html'
+    context_object_name = 'pets'
 
-    return render(request, 'pets/pet_list.html', context)
+
+class CreatePet(LoginRequiredMixin, CreateView):
+    model = Pet
+    fields = ('name', 'description', 'image', 'age', 'type')
+    template_name = 'pets/pet_create.html'
+    success_url = reverse_lazy('list pets')
+
+    def form_valid(self, form):
+        pet = form.save(commit=False)
+        pet.user = self.request.user
+        pet.save()
+        return super().form_valid(form)
 
 
 def like_pet(request, pk):
@@ -82,25 +94,6 @@ def like_pet(request, pk):
         )
         like.save()
     return redirect('details pets', pet.id)
-
-
-@login_required
-def create_pet(request):
-    if request.method == 'POST':
-        form = PetForm(request.POST, request.FILES)
-        if form.is_valid():
-            pet = form.save(commit=False)
-            pet.user = request.user
-            pet.save()
-            return redirect('list pets')
-    else:
-        form = PetForm()
-
-    context = {
-        'form': form,
-    }
-
-    return render(request, 'pets/pet_create.html', context)
 
 
 def edit_pet(request, pk):
@@ -119,6 +112,13 @@ def edit_pet(request, pk):
     }
 
     return render(request, 'pets/pet_edit.html', context)
+
+
+class EditPetView(UpdateView):
+    model = Pet
+    template_name = 'pets/pet_edit.html'
+    form_class = EditPetForm
+    success_url = reverse_lazy('list pets')
 
 
 def delete_pet(request, pk):
