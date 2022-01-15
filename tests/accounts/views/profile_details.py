@@ -1,22 +1,12 @@
 from django.test import TestCase, Client
 from django.urls import reverse
-from django.contrib.auth import get_user_model
 
+from tests.base.tests import PetstagramTestCase
 from petstagram.pets.models import Pet
 from petstagram.accounts.models import Profile
 
-UserModel = get_user_model()
-
-
-class PetstagramTestCase(TestCase):
-    def assertListEmpty(self, ll):
-        return self.assertListEqual([], ll, 'The list is not empty')
-
 
 class ProfileDetailsTest(PetstagramTestCase):
-    def setUp(self) -> None:
-        self.client = Client()
-        self.user = UserModel.objects.create_user(email='liusska@mail.bg', password='123456')
 
     def test_getDetails_when_loggedInUserWithNoPets_shouldGetDetailsWithNoPets(self):
         self.client.force_login(self.user)
